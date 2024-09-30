@@ -6,7 +6,7 @@ Plataformas testadas:
 
 - [x] Android
 - [x] Web
-- [] Windows
+- [ ] Windows
 
 ## Inicialização
 
