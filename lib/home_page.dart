@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:poc_pdf/prepare_pdf.dart';
@@ -23,12 +24,17 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("${_permission.toString()} : ${_permissionStatus.toString()}"),
-            const SizedBox(height: 8),
-            FilledButton(
-              onPressed: _requestPermission,
-              child: const Text("Solicitar permissão de armazenamento"),
-            ),
+            !kIsWeb
+                ? Text(
+                    "${_permission.toString()} : ${_permissionStatus.toString()}")
+                : Container(),
+            !kIsWeb ? const SizedBox(height: 8) : Container(),
+            !kIsWeb
+                ? FilledButton(
+                    onPressed: _requestPermission,
+                    child: const Text("Solicitar permissão de armazenamento"),
+                  )
+                : Container(),
             const SizedBox(height: 8),
             const FilledButton(
               onPressed: preparePdf,
@@ -44,7 +50,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _listenForPermissionStatus();
+    if (!kIsWeb) {
+      _listenForPermissionStatus();
+    }
   }
 
   void _listenForPermissionStatus() async {

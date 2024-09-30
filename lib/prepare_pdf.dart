@@ -1,19 +1,31 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:universal_html/html.dart' as html;
 
 void preparePdf() async {
   // Create a pdf file
   final pdf = pw.Document();
 
   // Prepare Image
-  final img = await rootBundle.load('assets/bola.jpg');
-  final imageBytes = img.buffer.asUint8List();
-  pw.Image image1 = pw.Image(pw.MemoryImage(imageBytes));
+  final ByteData img;
+  final pw.Image image;
+
+  if (!kIsWeb) {
+    img = await rootBundle.load('assets/bola.jpg');
+    final imageBytes = img.buffer.asUint8List();
+    image = pw.Image(pw.MemoryImage(imageBytes));
+  } else {
+    img = await rootBundle.load('assets/bola.jpg');
+    final imageBytes = img.buffer.asUint8List();
+    image = pw.Image(pw.MemoryImage(imageBytes));
+  }
 
   // Mount page
   pdf.addPage(
@@ -56,7 +68,7 @@ void preparePdf() async {
             pw.Container(
               alignment: pw.Alignment.center,
               height: 200,
-              child: image1,
+              child: image,
             ),
           ],
         ); // Center
@@ -64,18 +76,25 @@ void preparePdf() async {
     ),
   );
 
-  // Get safe directory
-  final outputDirectory = await getExternalStorageDirectory();
-  // Set pdf file name and location
-  final file = File("${outputDirectory?.path}/poc_pdf.pdf");
-  // Write content
-  await file.writeAsBytes(await pdf.save());
+  if (!kIsWeb) {
+    final outputDirectory = await getExternalStorageDirectory();
+    final file = File("${outputDirectory?.path}/poc_pdf.pdf");
+    await file.writeAsBytes(await pdf.save());
 
-  // Validation and open preview
-  final validation = await File(file.path).exists();
-  if (validation) {
-    await OpenFile.open(file.path);
+    final validation = await File(file.path).exists();
+    if (validation) {
+      await OpenFile.open(file.path);
+    } else {
+      print("Error during file opening");
+    }
   } else {
-    print("Error during file opening");
+    final savedFile = await pdf.save();
+    List<int> fileInts = List.from(savedFile);
+
+    html.AnchorElement()
+      ..href =
+          "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}"
+      ..setAttribute("download", "poc_pdf.pdf")
+      ..click();
   }
 }
