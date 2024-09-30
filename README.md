@@ -34,6 +34,16 @@ Exemplo:
 
 `macOS (desktop) • macos • darwin-arm64 • macOS 14.6.1 23G93 darwin-arm64`
 
+Após obter os dispositivos conectados, execute o comando abaixo passando o device_code que deseja.
+
+```
+flutter run --debug -d device_code
+```
+
+Exemplo:
+
+`flutter run --debug -d windows`
+
 #### Caso esteja executando dentro do Visual Studio Code
 
 Instale a extensão [Flutter](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter) e a habilite.
