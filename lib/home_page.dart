@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:poc_pdf/prepare_pdf.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,8 +27,13 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             FilledButton(
               onPressed: _requestPermission,
-              child: const Text("Request storage permission"),
-            )
+              child: const Text("Solicitar permissão de armazenamento"),
+            ),
+            const SizedBox(height: 8),
+            const FilledButton(
+              onPressed: preparePdf,
+              child: Text("Criar PDF"),
+            ),
           ],
         ),
       ),
